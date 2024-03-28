@@ -1,0 +1,8 @@
+{
+	"lamps": ["a8910a3f-e81b-4c31-a2a0-6a4548638d7d", "f45b6627-1dde-40cf-93cc-bc642b486929"],
+	"ledStrips": ["a55d19bf-0401-4e87-84ec-0237901fa8df","d117ee42-0da1-4e58-b16f-9e029e3a0b8b"],
+	"bridge": {
+		"ip": "192.168.100.244",
+		"accesKey": "eVubGB2wDOZINvHN6ukUGljs0wyBu8zOrTcPWIwr"
+	}
+}

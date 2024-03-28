@@ -1,0 +1,34 @@
+
+	setTimeout(()=>{
+		let testQueue = []
+		for (let i = 0; i <= 122; i++) {
+			testQueue.push(Math.round((Math.random()*3)+1))			
+		}
+
+		sendColorQueue(wss, testQueue)
+		console.log("sent")
+
+
+	// 	//torture experiment
+	// 	let onOff = false
+	// 	let onOff2 = false
+	// 	setInterval(()=>{
+	// 		onOff = !onOff
+	// 		if (onOff) {
+	// 			//sendHueLampData(dvConfig, {"dimming": {"brightness": 60}, dynamics: {duration: 2}, signaling: {signal: "on_off", duration: 3000}},dvConfig.lamps[0])
+	// 			sendHueLampData(dvConfig, {"dimming": {"brightness": 100}, dynamics: {duration: 2}},dvConfig.lamps[0])
+	// 		} else {
+	// 			sendHueLampData(dvConfig, {"dimming": {"brightness": 10}, dynamics: {duration: 2}},dvConfig.lamps[0])
+	// 		}
+	// 	}, 230)
+
+	// 	setInterval(()=>{
+	// 		onOff2 = !onOff2
+	// 		if (onOff2) {
+	// 			//sendHueLampData(dvConfig, {"dimming": {"brightness": 60}, dynamics: {duration: 2}, signaling: {signal: "on_off", duration: 3000}},dvConfig.lamps[0])
+	// 			sendHueLampData(dvConfig, {"dimming": {"brightness": 100}, dynamics: {duration: 2}},dvConfig.lamps[1])
+	// 		} else {
+	// 			sendHueLampData(dvConfig, {"dimming": {"brightness": 10}, dynamics: {duration: 2}},dvConfig.lamps[1])
+	// 		}
+	// 	}, 230)
+	}, 3000)

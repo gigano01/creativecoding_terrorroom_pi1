@@ -1,0 +1,15 @@
+[
+    {
+        "success": {
+            "username": "eVubGB2wDOZINvHN6ukUGljs0wyBu8zOrTcPWIwr",
+            "clientkey": "EFF52D99BE9B3E4589395FC316220B51"
+        }
+    }
+]
+
+a8910a3f-e81b-4c31-a2a0-6a4548638d7d   LAMP 1
+f45b6627-1dde-40cf-93cc-bc642b486929   LAMP 2
+
+hue-application-key
+
+sudo systemctl stop installatie.service
