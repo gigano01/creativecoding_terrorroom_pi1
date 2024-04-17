@@ -1,5 +1,13 @@
+const EventEmitter = require('events');
+class MyEmitter extends EventEmitter {}
+const myEmitter = new MyEmitter();
+
+module.exports = myEmitter;
+
+
 const { initializeDevices, sendHueLampData, flickerHueLamps, flickerHueLampsFailed, resetLamps } = require("./lib/devices.js")
 const { initWebsocket, sendNewInitPhase, sendColorQueue, sendColor, sendMessage } = require("./lib/server.js")
+
 
 //anders zaagt het programma
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
@@ -94,6 +102,10 @@ function setupButtons() {
 			console.log("noodstop")
 			state = STATES.emergencyStop
 			sendMessage(wss, "stop", { failCount: fails, rounds: roundNR })
+			setTimeout(()=>{
+				reset()
+				console.log("reset")
+			}, 5000)
 		}
 
 	});
@@ -228,6 +240,15 @@ function run(dvConfig) {
 
 				console.log(`introstate: ${introCounter}`)
 
+				//counter 3 -> we laten alle kleuren 3 keer zien in de color queue
+				if(introCounter === 1){
+					let tempQueue = []
+					for (let i = 0; i < 9; i++) {
+						tempQueue.push(i % 3 + 1)
+					}
+					sendColorQueue(wss,tempQueue)
+				}
+
 				//het is 5+1 omdat je het antwoord eigenlijk na de vraag pas krijgt, ookal is de vraag wel op introstate 5
 				if (introCounter === 3 + 1) {
 					switch (lastPressed) {
@@ -251,8 +272,8 @@ function run(dvConfig) {
 			break;
 
 		case STATES.emergencyStop:
-
-
+			myEmitter.emit('stopFlickering');
+			
 			break
 
 		default:
@@ -283,4 +304,18 @@ function newColor(stimuliCurve, lastColor) {
 		color = Math.round(Math.random() * 6) + 7
 	}
 	return color
+}
+
+function reset(){
+	roundNR = 0
+	fails = 0
+    colorQueue = []
+	lastPressed = null
+    queueStep = 0 //voor de input code
+	introCounter = 0
+
+	gameMode = null //ADHD, HSP of ASS
+	stimuliCurve = 0
+
+	state = STATES.awaitingGameStart
 }
