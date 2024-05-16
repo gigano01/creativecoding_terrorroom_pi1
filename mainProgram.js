@@ -37,11 +37,8 @@ const knopRood = new Gpio(20, 'in', 'rising', { debounceTimeout: 10 })
 const knopGroen = new Gpio(16, 'in', 'rising', { debounceTimeout: 10 })
 const knopGeel = new Gpio(26, 'in', 'rising', { debounceTimeout: 10 })
 const flasher = new Gpio(23, 'out', 'digital', { debounceTimeout: 10 })
-flasher.writeSync(1)
 
-setTimeout(() => {
-	flasher.writeSync(0)
-}, 3000)
+flasher.writeSync(0)
 setupButtons()
 buttonColor = { blauw: 4, groen: 3, geel: 2, rood: 1 }
 
@@ -89,6 +86,7 @@ async function setup() {
 	const dvConfig = await initializeDevices(require("./config/devices.json"))
 
 	newPhase("ready")
+
 
 	console.log("setup-lamps")
 	//set-up the lamps
@@ -254,8 +252,12 @@ function run(dvConfig) {
 			flickerHueLampsFailed(dvConfig, stimuliCurve, dvConfig.lamps[0])
 			flickerHueLampsFailed(dvConfig, stimuliCurve, dvConfig.lamps[1])
 			sendMessage(wss, "fail", {})
+			if (gameMode === "HSP" && stimuliCurve > 10) {
+				flasher.writeSync(1)
+			}
 
 			setTimeout(() => {
+				flasher.writeSync(0)
 				failReset()
 				state = STATES.inGameColorShowing
 			}, 4000)
@@ -298,28 +300,30 @@ function run(dvConfig) {
 
 				let succes = true
 				//het is 5+1 omdat je het antwoord eigenlijk na de vraag pas krijgt, ookal is de vraag wel op introstate 5
-				if (introCounter === 3 + 1) {
+				if (introCounter === 3+1) {
 					switch (lastPressed) {
 						case "geel":
 							gameMode = "ADHD"
-							state = STATES.inGameColorShowing
 							break;
 						case "groen":
 							gameMode = "HSP"
-							state = STATES.inGameColorShowing
 							break;
 						case "rood":
 							gameMode = "ASS"
-							state = STATES.inGameColorShowing
 							break;
 						default:
 							succes = false
 							break;
 					}
 
+					
+
 					console.log(`mode: ${gameMode}`)
 
 					//state = STATES.inGameColorShowing
+				}
+				if (introCounter >= 4) {
+					state = STATES.inGameColorShowing
 				}
 				if (succes) {
 					introCounter++
@@ -329,19 +333,19 @@ function run(dvConfig) {
 
 			break;
 
-			case STATES.emergencyStop:
-				myEmitter.emit('stopFlickering');
-				if (lastPressed != null) {
-					sendMessage(wss, "oselect", { color: buttonColor[lastPressed] })
-					if (outroCounter === 2) {
-						reset()
-						console.log("reset")
-					}
-			
-					outroCounter++
+		case STATES.emergencyStop:
+			myEmitter.emit('stopFlickering');
+			if (lastPressed != null) {
+				sendMessage(wss, "oselect", { color: buttonColor[lastPressed] })
+				if (outroCounter === 2) {
+					reset()
+					console.log("reset")
 				}
-			
-				break
+
+				outroCounter++
+			}
+
+			break
 
 		default:
 			console.log(`PANICC UNKNOWN STATE: ${state}`)
